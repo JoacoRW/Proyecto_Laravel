@@ -1,13 +1,25 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SettingsController;
 
 Route::get('/', function () {
-    #return view('welcome');
-    #return view('hello');
+    return view('welcome');
+})->name('welcome');
+
+Route::get('/dashboard', function () {
     return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// Configuración - accessible only for authenticated users
+Route::get('/settings', function () {
+    return view('settings');
+})->middleware(['auth', 'verified'])->name('settings');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Página de configuración
-Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+require __DIR__.'/auth.php';
