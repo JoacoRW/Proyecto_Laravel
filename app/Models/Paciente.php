@@ -33,49 +33,62 @@ class Paciente extends Model
     ];
 
     //relaciones
+
+    /**
+     * Consultas del paciente 
+     */
     public function consultas()
     {
         return $this->hasMany(Consulta::class, 'idPaciente', 'idPaciente');
     }
 
+    /**
+     * Alergias 
+     */
     public function alergias()
     {
         return $this->belongsToMany(Alergia::class, 'AlergiaPaciente', 'idPaciente', 'idAlergia')
                     ->withPivot('observacion', 'fechaRegistro');
-
     }
 
+    /**
+     * Habitos 
+     */
     public function habitos()
     {
         return $this->belongsToMany(Habito::class, 'HabitoPaciente', 'idPaciente', 'idHabito')
                     ->withPivot('observacion');
-
     }
 
+    /**
+     * Vacunas
+     */
     public function vacunas()
     {
         return $this->belongsToMany(Vacuna::class, 'PacienteVacuna', 'idPaciente', 'idVacuna')
                     ->withPivot('fecha', 'observacion');
     }
 
+    /**
+     * Medicamentos crónicos
+     */
     public function medicamentosCronicos()
     {
-    return $this->belongsToMany(Medicamento::class, 'MedicamentoCronicoPaciente', 'idPaciente', 'idMedicamento')
-                ->withPivot('fechaInicio', 'fechaFin', 'cronico')
-                ->withTimestamps();
+        return $this->belongsToMany(Medicamento::class, 'MedicamentoCronicoPaciente', 'idPaciente', 'idMedicamento')
+                    ->withPivot('fechaInicio', 'fechaFin', 'cronico')
+                    ->withTimestamps();
     }
+
 
     public function recetas()
     {
-    return $this->hasManyThrough(
-        Medicamento::class,      
-        \App\Models\Receta::class, 
-        'idConsulta',             
-        'idMedicamento',          
-        'idPaciente',             
-        'idMedicamento'          
-    );
+        return $this->hasManyThrough(
+            \App\Models\Receta::class,  
+            \App\Models\Consulta::class, 
+            'idPaciente',                
+            'idConsulta',              
+            'idPaciente',               
+            'idConsulta'               
+        );
     }
-
-
 }
