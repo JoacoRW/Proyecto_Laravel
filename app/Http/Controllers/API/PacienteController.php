@@ -89,7 +89,7 @@ class PacienteController extends Controller
 
         $validator = Validator::make($data, [
             'nombrePaciente' => 'sometimes|required|string|max:100',
-            'correo'         => ['nullable','email','max:100', Rule::unique('Paciente','correo')->ignore($patient->idPaciente,'idPaciente')],
+            'correo' => 'nullable|email|max:100|unique:' . (new \App\Models\Paciente)->getTable() . ',correo',
             'fechaNacimiento'=> 'sometimes|date',
             'sexo'           => ['sometimes', Rule::in(['masculino','femenino','otro'])],
         ]);
