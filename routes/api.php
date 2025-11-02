@@ -15,9 +15,11 @@ use App\Http\Controllers\API\ServicioSaludController;
 use App\Http\Controllers\API\ProfesionalSaludController;
 use App\Http\Controllers\API\TipoConsultaController;
 use App\Http\Controllers\API\TipoProcedimientoController;
+use App\Http\Controllers\API\FamiliaController;
 
 Route::post('auth/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
 Route::post('auth/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'store']);
+
 
 
 //protected API
@@ -45,6 +47,10 @@ Route::group([], function () {
 
     //Endpoints personalizados
     Route::get('patients/{id}/medicines', [MedicamentoController::class, 'obtenerMedicamentosPorPaciente']);
+    Route::get('familias/{idPaciente}', [FamiliaController::class, 'index']);
+    Route::post('familias', [FamiliaController::class, 'store']);
+    Route::post('familias/{idFamilia}/miembros', [FamiliaController::class, 'addMiembro']);
+    Route::delete('familias/{idFamilia}/miembros/{idPaciente}', [FamiliaController::class, 'removeMiembro']);
 
     //Rutas API estándar
     Route::apiResource('patients', PacienteController::class);
