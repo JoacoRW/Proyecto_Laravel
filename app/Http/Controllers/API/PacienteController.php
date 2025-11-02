@@ -33,6 +33,11 @@ class PacienteController extends Controller
             'direccion','sexo','nacionalidad','ocupacion','prevision','tipoSangre'
         ]);
 
+        // Si el correo está vacío, establecerlo como null
+        if (empty($data['correo']) || trim($data['correo']) === '') {
+            $data['correo'] = null;
+        }
+
         $validator = Validator::make($data, [
             'nombrePaciente' => 'required|string|max:100',
             'correo'         => 'nullable|email|max:100|unique:Paciente,correo',
