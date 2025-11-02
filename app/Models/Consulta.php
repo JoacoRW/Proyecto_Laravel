@@ -30,7 +30,6 @@ class Consulta extends Model
     protected $casts = [
         'fechaIngreso' => 'date',
         'fechaEgreso' => 'date',
-        'hora' => 'time',
     ];
 
     public function paciente()
