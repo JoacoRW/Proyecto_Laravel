@@ -20,7 +20,27 @@ Route::post('auth/login', [\App\Http\Controllers\Auth\AuthenticatedSessionContro
 Route::post('auth/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'store']);
 
 //protected API
-Route::middleware('auth:sanctum')->group(function () {
+//Route::middleware('auth:sanctum')->group(function () {
+    //Route::apiResource('patients', PacienteController::class);
+    //Route::apiResource('consultations', ConsultaController::class);
+    //Route::apiResource('prescriptions', RecetaController::class);
+    //Route::apiResource('diagnostics', DiagnosticoController::class);
+    //Route::apiResource('allergies', AlergiaController::class);
+    //Route::apiResource('medicines', MedicamentoController::class);
+    //Route::apiResource('vaccines', VacunaController::class);
+    //Route::apiResource('services', ServicioSaludController::class);
+    //Route::apiResource('professionals', ProfesionalSaludController::class);
+    //Route::apiResource('types/consult', TipoConsultaController::class);
+    //Route::apiResource('types/procedure', TipoProcedimientoController::class);
+    //Route::post('patients/{patient}/documents', [DocumentController::class, 'store']);
+    //Route::get('patients/{patient}/documents', [DocumentController::class, 'index']);
+    //Route::post('documents/{id}/process', [DocumentController::class, 'process']);
+    //Route::post('datasets/request', [DatasetController::class, 'requestExport']);
+    //Route::get('datasets/{id}/download', [DatasetController::class, 'download']);
+//});
+
+//temporalmente sin autenticación
+Route::group([], function () {
     Route::apiResource('patients', PacienteController::class);
     Route::apiResource('consultations', ConsultaController::class);
     Route::apiResource('prescriptions', RecetaController::class);
@@ -32,11 +52,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('professionals', ProfesionalSaludController::class);
     Route::apiResource('types/consult', TipoConsultaController::class);
     Route::apiResource('types/procedure', TipoProcedimientoController::class);
-
-    Route::post('patients/{patient}/documents', [DocumentController::class, 'store']);
-    Route::get('patients/{patient}/documents', [DocumentController::class, 'index']);
-    Route::post('documents/{id}/process', [DocumentController::class, 'process']);
-
-    Route::post('datasets/request', [DatasetController::class, 'requestExport']);
-    Route::get('datasets/{id}/download', [DatasetController::class, 'download']);
 });

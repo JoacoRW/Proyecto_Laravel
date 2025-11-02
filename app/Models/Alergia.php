@@ -12,6 +12,7 @@ class Alergia extends Model
     protected $table = 'Alergia';
     protected $primaryKey = 'idAlergia';
     public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
         'alergia'
@@ -20,6 +21,7 @@ class Alergia extends Model
     public function pacientes()
     {
         return $this->belongsToMany(Paciente::class, 'AlergiaPaciente', 'idAlergia', 'idPaciente')
-                    ->withTimestamps();
+                    ->withPivot('observacion', 'fechaRegistro')
+                    ->using(AlergiaPaciente::class);
     }
 }

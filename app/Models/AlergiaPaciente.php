@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class AlergiaPaciente extends Model
+class AlergiaPaciente extends Pivot
 {
-    use HasFactory;
-
     protected $table = 'AlergiaPaciente';
     public $incrementing = false;
     protected $primaryKey = null;
+    public $timestamps = false;
 
     protected $fillable = [
         'idPaciente',

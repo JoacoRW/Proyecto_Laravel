@@ -2,36 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class PacienteVacuna extends Model
+class PacienteVacuna extends Pivot
 {
-    use HasFactory;
-
     protected $table = 'PacienteVacuna';
     public $incrementing = false;
     protected $primaryKey = null;
+    public $timestamps = false;
 
     protected $fillable = [
         'idPaciente',
         'idVacuna',
         'fecha',
-        'dosis',
         'observacion',
     ];
 
     protected $casts = [
         'fecha' => 'date',
     ];
-
-    public function paciente()
-    {
-        return $this->belongsTo(Paciente::class, 'idPaciente', 'idPaciente');
-    }
-
-    public function vacuna()
-    {
-        return $this->belongsTo(Vacuna::class, 'idVacuna', 'idVacuna');
-    }
 }

@@ -32,7 +32,7 @@ class Paciente extends Model
         'fechaNacimiento' => 'date',
     ];
 
-    // Relaciones
+    //relaciones
     public function consultas()
     {
         return $this->hasMany(Consulta::class, 'idPaciente', 'idPaciente');
@@ -41,18 +41,20 @@ class Paciente extends Model
     public function alergias()
     {
         return $this->belongsToMany(Alergia::class, 'AlergiaPaciente', 'idPaciente', 'idAlergia')
-                    ->withTimestamps();
+                    ->withPivot('observacion', 'fechaRegistro');
+
     }
 
     public function habitos()
     {
         return $this->belongsToMany(Habito::class, 'HabitoPaciente', 'idPaciente', 'idHabito')
-                    ->withTimestamps();
+                    ->withPivot('observacion');
+
     }
 
     public function vacunas()
     {
         return $this->belongsToMany(Vacuna::class, 'PacienteVacuna', 'idPaciente', 'idVacuna')
-                    ->withPivot('fecha','observacion')->withTimestamps();
+                    ->withPivot('fecha', 'observacion');
     }
 }

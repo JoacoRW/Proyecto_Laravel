@@ -4,46 +4,39 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\Jobs\ProcessDocumentJob;
+use App\Models\Paciente;
 
 class DocumentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index($patientId)
     {
-        //
+
+        $prefix = "patients/{$patientId}/documents/";
+        $objects = Storage::disk('s3')->files($prefix);
+        return response()->json(['files' => $objects]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(Request $request, $patientId)
     {
-        //
+        $request->validate([
+            'file' => 'required|file|max:10240' // 10MB
+        ]);
+
+        $file = $request->file('file');
+        $path = "patients/{$patientId}/documents/" . time() . "_" . $file->getClientOriginalName();
+        Storage::disk('s3')->put($path, fopen($file->getPathname(), 'r+'));
+
+        //Registrar metadatos en DB si deseas (tabla Document)
+        ProcessDocumentJob::dispatch($patientId, $path);
+
+        return response()->json(['path' => $path], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function process($id)
     {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json(['processed' => true]);
     }
 }

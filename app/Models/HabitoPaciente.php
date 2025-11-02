@@ -2,30 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class HabitoPaciente extends Model
+class HabitoPaciente extends Pivot
 {
-    use HasFactory;
-
     protected $table = 'HabitoPaciente';
     public $incrementing = false;
     protected $primaryKey = null;
+    public $timestamps = false;
 
     protected $fillable = [
         'idHabito',
         'idPaciente',
         'observacion',
     ];
-
-    public function habito()
-    {
-        return $this->belongsTo(Habito::class, 'idHabito', 'idHabito');
-    }
-
-    public function paciente()
-    {
-        return $this->belongsTo(Paciente::class, 'idPaciente', 'idPaciente');
-    }
 }
