@@ -44,7 +44,7 @@ Route::post('auth/register', [\App\Http\Controllers\Auth\RegisteredUserControlle
 Route::group([], function () {
 
     //Endpoints personalizados
-    Route::get('patients/{id}/medicines', [MedicamentoController::class, 'obtenerMedicamentosPorPaciente']);
+    Route::get('patients/{id}/medicines', [MedicamentoController::class, 'obtenerMedicamentosPorPaciente']);}
 
     //Rutas API estándar
     Route::apiResource('patients', PacienteController::class);
