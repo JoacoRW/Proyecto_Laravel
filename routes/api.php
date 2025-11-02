@@ -19,6 +19,7 @@ use App\Http\Controllers\API\TipoProcedimientoController;
 Route::post('auth/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
 Route::post('auth/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'store']);
 
+
 //protected API
 //Route::middleware('auth:sanctum')->group(function () {
     //Route::apiResource('patients', PacienteController::class);
@@ -39,8 +40,13 @@ Route::post('auth/register', [\App\Http\Controllers\Auth\RegisteredUserControlle
     //Route::get('datasets/{id}/download', [DatasetController::class, 'download']);
 //});
 
-//temporalmente sin autenticación
+//Endpoints públicos temporales
 Route::group([], function () {
+
+    //Endpoints personalizados
+    Route::get('patients/{id}/medicines', [MedicamentoController::class, 'obtenerMedicamentosPorPaciente']);
+
+    //Rutas API estándar
     Route::apiResource('patients', PacienteController::class);
     Route::apiResource('consultations', ConsultaController::class);
     Route::apiResource('prescriptions', RecetaController::class);

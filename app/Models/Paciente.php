@@ -57,4 +57,25 @@ class Paciente extends Model
         return $this->belongsToMany(Vacuna::class, 'PacienteVacuna', 'idPaciente', 'idVacuna')
                     ->withPivot('fecha', 'observacion');
     }
+
+    public function medicamentosCronicos()
+    {
+    return $this->belongsToMany(Medicamento::class, 'MedicamentoCronicoPaciente', 'idPaciente', 'idMedicamento')
+                ->withPivot('fechaInicio', 'fechaFin', 'cronico')
+                ->withTimestamps();
+    }
+
+    public function recetas()
+    {
+    return $this->hasManyThrough(
+        Medicamento::class,      
+        \App\Models\Receta::class, 
+        'idConsulta',             
+        'idMedicamento',          
+        'idPaciente',             
+        'idMedicamento'          
+    );
+    }
+
+
 }
