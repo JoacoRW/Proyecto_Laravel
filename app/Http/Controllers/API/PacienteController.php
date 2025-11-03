@@ -33,7 +33,7 @@ class PacienteController extends Controller
             'direccion','sexo','nacionalidad','ocupacion','prevision','tipoSangre'
         ]);
 
-        // Si el correo está vacío, establecerlo como null
+        //Si el correo está vacío, establecerlo como null
         if (empty($data['correo']) || trim($data['correo']) === '') {
             $data['correo'] = null;
         }
@@ -43,6 +43,13 @@ class PacienteController extends Controller
             'correo'         => 'nullable|email|max:100|unique:Paciente,correo',
             'fechaNacimiento'=> 'required|date',
             'sexo'           => ['required', Rule::in(['masculino','femenino','otro'])],
+            'telefono'       => 'nullable|string|max:20',
+            'direccion'      => 'nullable|string',
+            'nacionalidad'   => 'nullable|string|max:100',
+            'ocupacion'      => 'nullable|string|max:255',
+            'prevision'      => 'required|string|max:50',
+            'tipoSangre'     => 'nullable|string|max:10',
+            'fotoPerfil'     => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
@@ -51,7 +58,10 @@ class PacienteController extends Controller
 
         $patient = Paciente::create($data);
 
-        return response()->json($patient, 201);
+        return response()->json([
+            'success' => true,
+            'data' => $patient
+        ], 201);
     }
 
     public function show($id)
@@ -92,11 +102,28 @@ class PacienteController extends Controller
             'direccion','sexo','nacionalidad','ocupacion','prevision','tipoSangre'
         ]);
 
+        // Si el correo está vacío, establecerlo como null
+        if (isset($data['correo']) && (empty($data['correo']) || trim($data['correo']) === '')) {
+            $data['correo'] = null;
+        }
+
         $validator = Validator::make($data, [
             'nombrePaciente' => 'sometimes|required|string|max:100',
-            'correo' => 'nullable|email|max:100|unique:' . (new \App\Models\Paciente)->getTable() . ',correo',
-            'fechaNacimiento'=> 'sometimes|date',
-            'sexo'           => ['sometimes', Rule::in(['masculino','femenino','otro'])],
+            'correo' => [
+                'nullable',
+                'email',
+                'max:100',
+                Rule::unique('Paciente', 'correo')->ignore($patient->idPaciente, 'idPaciente')
+            ],
+            'fechaNacimiento'=> 'sometimes|required|date',
+            'sexo'           => ['sometimes', 'required', Rule::in(['masculino','femenino','otro'])],
+            'telefono'       => 'nullable|string|max:20',
+            'direccion'      => 'nullable|string',
+            'nacionalidad'   => 'nullable|string|max:100',
+            'ocupacion'      => 'nullable|string|max:255',
+            'prevision'      => 'sometimes|required|string|max:50',
+            'tipoSangre'     => 'nullable|string|max:10',
+            'fotoPerfil'     => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
@@ -105,13 +132,34 @@ class PacienteController extends Controller
 
         $patient->update($data);
 
-        return response()->json($patient);
+        return response()->json([
+            'success' => true,
+            'data' => $patient
+        ]);
     }
 
     public function destroy($id)
     {
-        $patient = Paciente::findOrFail($id);
-        $patient->delete();
-        return response()->json(['deleted' => true]);
+        try {
+            $patient = Paciente::findOrFail($id);
+            $patient->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Paciente eliminado correctamente'
+            ]);
+            
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Paciente no encontrado.'
+            ], 404);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar paciente: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
