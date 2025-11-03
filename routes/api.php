@@ -51,7 +51,8 @@ Route::group([], function () {
     Route::post('familias', [FamiliaController::class, 'store']);
     Route::post('familias/{idFamilia}/miembros', [FamiliaController::class, 'addMiembro']);
     Route::delete('familias/{idFamilia}/miembros/{idPaciente}', [FamiliaController::class, 'removeMiembro']);
-
+    Route::get('patients/{id}/estadisticas', [EstadisticasController::class, 'getEstadisticasPaciente']);
+    Route::get('patients/{id}/metricas-salud', [EstadisticasController::class, 'getMetricasSalud']);
     //Rutas API estándar
     Route::apiResource('patients', PacienteController::class);
     Route::apiResource('consultations', ConsultaController::class);
