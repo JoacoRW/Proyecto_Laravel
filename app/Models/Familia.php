@@ -27,7 +27,6 @@ class Familia extends Model
     public function miembros()
     {
         return $this->belongsToMany(Paciente::class, 'FamiliaPaciente', 'idFamilia', 'idPaciente')
-                    ->withPivot('fechaAgregado', 'rol')
-                    ->withTimestamps();
+                    ->withPivot('fechaAgregado', 'rol');
     }
 }
