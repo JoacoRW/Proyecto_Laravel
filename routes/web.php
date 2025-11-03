@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DatabaseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -15,6 +16,10 @@ Route::get('/dashboard', function () {
 Route::get('/settings', function () {
     return view('settings');
 })->middleware(['auth', 'verified'])->name('settings');
+
+// Simple DB inspector (requires auth & verified)
+Route::get('/db', [DatabaseController::class, 'index'])->middleware(['auth', 'verified'])->name('db.index');
+Route::get('/db/tables', [DatabaseController::class, 'tables'])->middleware(['auth', 'verified'])->name('db.tables');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
