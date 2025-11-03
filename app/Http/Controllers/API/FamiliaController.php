@@ -97,10 +97,11 @@ class FamiliaController extends Controller
 
             DB::commit();
 
+            // ✅ CORREGIDO: Cambiar 'miembros.paciente' por solo 'miembros'
             return response()->json([
                 'success' => true,
                 'message' => 'Miembro agregado correctamente',
-                'familia' => $familia->load('miembros.paciente')
+                'familia' => $familia->load('miembros') // Solo cargar miembros, no anidado
             ]);
 
         } catch (\Exception $e) {
