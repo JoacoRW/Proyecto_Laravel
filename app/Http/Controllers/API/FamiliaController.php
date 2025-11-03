@@ -7,29 +7,61 @@ use App\Models\Familia;
 use App\Models\Paciente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FamiliaController extends Controller
 {
     public function index($idPaciente)
     {
-        $familias = Familia::where('idOwner', $idPaciente)
-            ->with(['miembros.paciente'])
-            ->get();
+        try {
+            Log::info("Buscando familias para paciente: {$idPaciente}");
+            
+            $familias = Familia::where('idOwner', $idPaciente)
+                ->with(['miembros']) 
+                ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $familias
-        ]);
+            Log::info("Familias encontradas: " . $familias->count());
+
+            return response()->json([
+                'success' => true,
+                'data' => $familias
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error("Error en FamiliaController@index: " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno del servidor: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function store(Request $request)
     {
-        $familia = Familia::create($request->only('nombre', 'descripcion', 'idOwner'));
+        try {
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'nullable|string',
+                'idOwner' => 'required|integer|exists:Paciente,idPaciente'
+            ]);
 
-        return response()->json([
-            'success' => true,
-            'data' => $familia
-        ]);
+            $familia = Familia::create($validated);
+
+            return response()->json([
+                'success' => true,
+                'data' => $familia
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error("Error en FamiliaController@store: " . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear familia: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -51,9 +83,13 @@ class FamiliaController extends Controller
             $idPaciente = $validated['idPaciente'];
             $idOwner = $validated['idOwner'] ?? null;
 
+            Log::info("Agregando miembro: familia={$idFamilia}, paciente={$idPaciente}, rol={$rol}");
+
             $familia = Familia::find($idFamilia);
 
             if (!$familia && $idOwner) {
+                Log::info("Familia no encontrada, creando nueva para owner: {$idOwner}");
+                
                 $owner = Paciente::find($idOwner);
 
                 if (!$owner) {
@@ -68,6 +104,8 @@ class FamiliaController extends Controller
                     'descripcion' => 'Grupo familiar creado automáticamente.',
                     'idOwner' => $owner->idPaciente
                 ]);
+                
+                Log::info("Nueva familia creada: {$familia->idFamilia}");
             }
 
             if (!$familia) {
@@ -77,6 +115,7 @@ class FamiliaController extends Controller
                 ], 400);
             }
 
+            // Verificar si ya existe la relación
             $yaExiste = DB::table('FamiliaPaciente')
                 ->where('idFamilia', $familia->idFamilia)
                 ->where('idPaciente', $idPaciente)
@@ -90,22 +129,29 @@ class FamiliaController extends Controller
                 ]);
             }
 
-            $familia->miembros()->attach($idPaciente, [
+            // Insertar usando DB::table para evitar problemas con Eloquent
+            DB::table('FamiliaPaciente')->insert([
+                'idFamilia' => $familia->idFamilia,
+                'idPaciente' => $idPaciente,
                 'rol' => $rol,
                 'fechaAgregado' => now()
             ]);
 
             DB::commit();
 
-            // ✅ CORREGIDO: Cambiar 'miembros.paciente' por solo 'miembros'
+            // Recargar la familia con los miembros
+            $familia->load('miembros');
+
             return response()->json([
                 'success' => true,
                 'message' => 'Miembro agregado correctamente',
-                'familia' => $familia->load('miembros') // Solo cargar miembros, no anidado
+                'familia' => $familia
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error("Error en FamiliaController@addMiembro: " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
 
             return response()->json([
                 'success' => false,
@@ -116,12 +162,26 @@ class FamiliaController extends Controller
 
     public function removeMiembro($idFamilia, $idPaciente)
     {
-        $familia = Familia::findOrFail($idFamilia);
-        $familia->miembros()->detach($idPaciente);
+        try {
+            $familia = Familia::findOrFail($idFamilia);
+            
+            DB::table('FamiliaPaciente')
+                ->where('idFamilia', $idFamilia)
+                ->where('idPaciente', $idPaciente)
+                ->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Miembro eliminado correctamente'
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Miembro eliminado correctamente'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error("Error en FamiliaController@removeMiembro: " . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar miembro: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
