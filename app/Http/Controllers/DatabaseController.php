@@ -12,9 +12,6 @@ class DatabaseController extends Controller
         return view('db.index');
     }
 
-    /**
-     * Return JSON with tables and counts.
-     */
     public function tables(Request $request)
     {
         $tables = DB::select("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name");

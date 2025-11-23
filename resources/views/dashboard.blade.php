@@ -331,8 +331,9 @@
         /* grid */
         .bottom-grid {
             display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
+            align-items: start;
         }
 
         .sales-cards {
@@ -446,30 +447,6 @@
         <!-- sidebar -->
         <aside class="sidebar">
             <div class="logo">🔷</div>
-            <svg class="sidebar-icon active" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-            </svg>
-            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-            </svg>
-            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-            </svg>
-            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-            </svg>
-            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-            </svg>
-            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-            </svg>
         </aside>
 
         <!-- main content -->
@@ -483,12 +460,6 @@
                     <input type="text" placeholder="Busca aquí...">
                 </div>
                 <div class="header-actions">
-                    <div class="icon-btn">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                        </svg>
-                        <span class="notification-badge">3</span>
-                    </div>
                     <!--DB button-->
                     <a href="{{ route('db.index') }}" class="icon-btn" title="Inspector DB" style="margin-right:8px">
                         <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -503,9 +474,14 @@
                     </a>
                     <div class="user-profile">
                         <div class="user-info">
-                            <div class="user-name">Leo Causa</div>
-                            <div class="user-role">CEO BETTER CLOTHES</div>
-                        </div>
+                                @auth
+                                    <div class="user-name">{{ auth()->user()->name ?? auth()->user()->nombre ?? auth()->user()->email }}</div>
+                                    <div class="user-role">{{ strtoupper(auth()->user()->role ?? 'Usuario') }}</div>
+                                @else
+                                    <div class="user-name">Invitado</div>
+                                    <div class="user-role">Usuario</div>
+                                @endauth
+                            </div>
                         <div class="user-avatar"></div>
                     </div>
 
@@ -521,37 +497,14 @@
                 </div>
             </header>
             
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
-                <div class="export-buttons">
-                    <button class="week-selector">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        Semana actual
-                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <button class="export-btn">
-                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M8 2a.5.5 0 01.5.5V4h3v-.5a.5.5 0 011 0V4h1.5A1.5 1.5 0 0115.5 5.5v9a1.5 1.5 0 01-1.5 1.5h-9A1.5 1.5 0 013.5 14.5v-9A1.5 1.5 0 015 4h1.5v-.5A.5.5 0 018 2z"></path>
-                        </svg>
-                        Exportar PDF
-                    </button>
-                    <button class="export-btn excel">
-                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"></path>
-                            <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"></path>
-                        </svg>
-                        Exportar Excel
-                    </button>
-                </div>
+            <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px;">
+                <a href="{{ route('consultas.index') }}" class="export-btn" style="background: #4d7cff; border: none; color: #fff; padding: 10px 16px; border-radius:8px; font-weight:600;">Ver Consultas</a>
             </div>
 
             <!-- cartas stats -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-label">Cantidad de Pacientes</div>
+                    <div class="stat-label">Pacientes activos (30d)</div>
                     <div class="stat-value" id="pacientes-value">340290</div>
                     <div class="stat-change">
                         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -561,7 +514,7 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Indicador</div>
+                    <div class="stat-label">Consultas (30d)</div>
                     <div class="stat-value" id="indicador-value">342224</div>
                     <div class="stat-change">
                         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -571,18 +524,18 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Indicador2</div>
+                    <div class="stat-label">Nuevos pacientes (30d)</div>
                     <div class="stat-value" id="indicador2-value">23432</div>
                     <div class="stat-subtitle" id="indicador2-subtitle">131 Hug × 48 Hug</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">ACTIVIDAD DE VENTAS</div>
-                    <div class="stat-value" id="ventas-value">$8954.57</div>
+                    <div class="stat-label">Exámenes (30d)</div>
+                    <div class="stat-value" id="ventas-value">0</div>
                     <div class="stat-change">
                         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                         </svg>
-                        <span id="ventas-change">15%</span>
+                        <span id="ventas-change">0%</span>
                     </div>
                 </div>
             </div>
@@ -594,8 +547,8 @@
                     <div class="chart-header">
                         <h3 class="chart-title">ACTIVIDAD MÉDICA</h3>
                         <select class="chart-filter" id="medical-filter">
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
+                            <option value="2024">2025</option>
+                            <option value="2023">2024</option>
                         </select>
                     </div>
                     <div style="height: 300px; position: relative;">
@@ -603,67 +556,18 @@
                     </div>
                 </div>
 
-                <!-- tabla top centros medicos -->
-                <div class="chart-card">
+                <!-- Top pacientes por consultas (reemplaza tabla de centros) -->
+                <div class="chart-card" style="width:100%;">
                     <div class="chart-header">
-                        <h3 class="chart-title">Top de centros médicos asistidos</h3>
+                        <h3 class="chart-title">Top Pacientes por Consultas</h3>
                         <select class="chart-filter" id="centers-filter">
                             <option value="30">Últimos 30 días</option>
                             <option value="60">Últimos 60 días</option>
                             <option value="90">Últimos 90 días</option>
                         </select>
                     </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Precio</th>
-                                    <th>Rating</th>
-                                </tr>
-                            </thead>
-                            <tbody id="top-centers-table">
-                                <tr>
-                                    <td>
-                                        <div class="product-name">VESTIDO MUJER STAR CAROLINA</div>
-                                        <div class="product-desc">Color verde, corte europeo</div>
-                                    </td>
-                                    <td>$11.57</td>
-                                    <td>
-                                        <div class="rating">
-                                            <span class="star">⭐</span>
-                                            <span>4.2</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="product-name">POLERÓN MUJER BREAKING BAD</div>
-                                        <div class="product-desc">Color amarillo, oversize</div>
-                                    </td>
-                                    <td>$22.99</td>
-                                    <td>
-                                        <div class="rating">
-                                            <span class="star">⭐</span>
-                                            <span>5.0</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="product-name">GORRO B&W</div>
-                                        <div class="product-desc">Color negro, línea premium W</div>
-                                    </td>
-                                    <td>$15.57</td>
-                                    <td>
-                                        <div class="rating">
-                                            <span class="star">⭐</span>
-                                            <span>4.8</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div style="height: 420px; position: relative; width:100%;">
+                        <canvas id="topPatientsChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -671,14 +575,17 @@
             <!-- grid  -->
             <div class="bottom-grid">
                 <!-- grafico pie -->
-                <div class="chart-card">
-                    <div style="height: 280px; position: relative;">
-                        <canvas id="pieChart"></canvas>
+                <div class="chart-card" style="width:100%;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Distribución por Tipo de Consulta</h3>
+                    </div>
+                    <div style="height: 420px; position: relative; width:100%; display:flex; align-items:center; justify-content:center;">
+                        <canvas id="pieChart" style="max-width:420px; width:100%;"></canvas>
                     </div>
                 </div>
 
                 <!-- grafico examenes -->
-                <div class="chart-card">
+                <div class="chart-card" style="width:100%;">
                     <div class="chart-header">
                         <h3 class="chart-title">Exámenes más realizados</h3>
                         <select class="chart-filter" id="exams-filter">
@@ -686,22 +593,12 @@
                             <option value="2023">2023</option>
                         </select>
                     </div>
-                    <div style="height: 250px; position: relative;">
+                    <div style="height: 420px; position: relative; width:100%;">
                         <canvas id="examsChart"></canvas>
                     </div>
                 </div>
 
-                <!-- cards ventas -->
-                <div class="sales-cards">
-                    <div class="sales-card">
-                        <div class="sales-label">ACTIVIDAD DE VENTAS</div>
-                        <div class="sales-value" id="sales1-value">$8954.57</div>
-                    </div>
-                    <div class="sales-card">
-                        <div class="sales-label">ACTIVIDAD DE VENTAS</div>
-                        <div class="sales-value" id="sales2-value">$8954.57</div>
-                    </div>
-                </div>
+                <!-- sales cards removed; bottom now has two centered charts -->
             </div>
         </main>
     </div>
@@ -722,33 +619,17 @@
                 subtitle: '131 Hug × 48 Hug'
             },
             ventas: {
-                value: 8954.57,
-                change: 15
+                value: 0,
+                change: 0
             },
             actividadMedica: {
                 labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
                 data: [5000, 6000, 3000, 4000, 2000, 5000, 8000, 7000, 6000, 5000, 3000, 5000]
             },
-            topCentros: [
-                {
-                    nombre: 'VESTIDO MUJER STAR CAROLINA',
-                    descripcion: 'Color verde, corte europeo',
-                    precio: 11.57,
-                    rating: 4.2
-                },
-                {
-                    nombre: 'POLERÓN MUJER BREAKING BAD',
-                    descripcion: 'Color amarillo, oversize',
-                    precio: 22.99,
-                    rating: 5.0
-                },
-                {
-                    nombre: 'GORRO B&W',
-                    descripcion: 'Color negro, línea premium W',
-                    precio: 15.57,
-                    rating: 4.8
-                }
-            ],
+            topPacientes: {
+                labels: [],
+                data: []
+            },
             pieChart: {
                 labels: ['Categoría 1', 'Categoría 2', 'Categoría 3', 'Categoría 4'],
                 data: [35, 30, 25, 10],
@@ -890,6 +771,34 @@
             }
         });
 
+        // grafico top pacientes (horizontal bar)
+        const topPatientsCtx = document.getElementById('topPatientsChart').getContext('2d');
+        const topPatientsChart = new Chart(topPatientsCtx, {
+            type: 'bar',
+            data: {
+                labels: dashboardData.topPacientes.labels,
+                datasets: [{
+                    label: 'Consultas',
+                    data: dashboardData.topPacientes.data,
+                    backgroundColor: '#4ecdc4',
+                    borderRadius: 8,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { backgroundColor: '#1a1f3a' }
+                },
+                scales: {
+                    x: { beginAtZero: true, grid: { color: '#1a1f3a' } },
+                    y: { grid: { display: false }, ticks: { autoSkip: false } }
+                }
+            }
+        });
+
         // funcion actualizar datos del dashboard
         function updateDashboard(newData) {
             // actualizar valores de las tarjetas
@@ -909,10 +818,9 @@
             }
             
             if (newData.ventas) {
-                document.getElementById('ventas-value').textContent = '$' + newData.ventas.value.toFixed(2);
+                // ventas now represents número de exámenes
+                document.getElementById('ventas-value').textContent = newData.ventas.value.toLocaleString();
                 document.getElementById('ventas-change').textContent = newData.ventas.change + '%';
-                document.getElementById('sales1-value').textContent = '$' + newData.ventas.value.toFixed(2);
-                document.getElementById('sales2-value').textContent = '$' + newData.ventas.value.toFixed(2);
             }
             
             // actualizar grafico de actividad medica
@@ -922,28 +830,11 @@
                 medicalActivityChart.update();
             }
             
-            // actualizar tabla de centros
-            if (newData.topCentros) {
-                const tableBody = document.getElementById('top-centers-table');
-                tableBody.innerHTML = '';
-                newData.topCentros.forEach(centro => {
-                    const row = `
-                        <tr>
-                            <td>
-                                <div class="product-name">${centro.nombre}</div>
-                                <div class="product-desc">${centro.descripcion}</div>
-                            </td>
-                            <td>$${centro.precio.toFixed(2)}</td>
-                            <td>
-                                <div class="rating">
-                                    <span class="star">⭐</span>
-                                    <span>${centro.rating}</span>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                    tableBody.innerHTML += row;
-                });
+            // actualizar top pacientes
+            if (newData.topPacientes) {
+                topPatientsChart.data.labels = newData.topPacientes.labels;
+                topPatientsChart.data.datasets[0].data = newData.topPacientes.data;
+                topPatientsChart.update();
             }
             
             // actualizar grafico circular
@@ -964,7 +855,7 @@
             }
         }
 
-        // event listeners para filtros
+            // event listeners para filtros
         document.getElementById('medical-filter').addEventListener('change', function(e) {
             console.log('Filtro de año seleccionado:', e.target.value);
         });
@@ -976,6 +867,22 @@
         document.getElementById('exams-filter').addEventListener('change', function(e) {
             console.log('Filtro de exámenes seleccionado:', e.target.value);
         });
+
+        // Fetch metrics from server and update charts
+        async function loadDashboardMetrics() {
+            try {
+                const res = await fetch('{{ route('metrics.dashboard') }}');
+                if (!res.ok) throw new Error('Network response was not ok');
+                const data = await res.json();
+                updateDashboard(data);
+            } catch (err) {
+                console.error('Failed to load dashboard metrics', err);
+            }
+        }
+
+        // initial load and periodic refresh
+        loadDashboardMetrics();
+        setInterval(loadDashboardMetrics, 60 * 1000); // refresh every minute
     </script>
 </body>
 </html>

@@ -55,6 +55,9 @@ Route::group([], function () {
     Route::get('patients/{id}/metricas-salud', [EstadisticasController::class, 'getMetricasSalud']);
     //Rutas API estándar
     Route::apiResource('patients', PacienteController::class);
+    // Proxy to external Node API (if you're using the Node server on EC2)
+    Route::get('external/pacientes', [\App\Http\Controllers\API\NodeProxyController::class, 'index']);
+    Route::get('external/pacientes/{id}', [\App\Http\Controllers\API\NodeProxyController::class, 'show']);
     Route::apiResource('consultations', ConsultaController::class);
     Route::apiResource('prescriptions', RecetaController::class);
     Route::apiResource('diagnostics', DiagnosticoController::class);

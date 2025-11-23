@@ -9,6 +9,7 @@ class Paciente extends Model
 {
     use HasFactory;
 
+    // The table used by the rest of migrations is `Paciente` with primary key `idPaciente`.
     protected $table = 'Paciente';
     protected $primaryKey = 'idPaciente';
     public $incrementing = true;
@@ -90,5 +91,13 @@ class Paciente extends Model
             'idPaciente',               
             'idConsulta'               
         );
+    }
+
+    /**
+     * Return a friendly display name for the paciente.
+     */
+    public function getDisplayNameAttribute()
+    {
+        return $this->nombrePaciente ?? $this->nombre ?? $this->name ?? ('Paciente ' . $this->{$this->getKeyName()});
     }
 }

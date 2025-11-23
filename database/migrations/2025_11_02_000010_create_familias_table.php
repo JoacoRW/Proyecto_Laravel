@@ -4,24 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFamiliasTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
-        Schema::create('Familia', function (Blueprint $table) {
-            $table->increments('idFamilia');
-            $table->string('nombre', 150)->nullable();
-            $table->text('descripcion')->nullable();
-            $table->unsignedInteger('idOwner');
-            $table->timestamps();
-
-            $table->index('idOwner');
-            $table->foreign('idOwner')->references('idPaciente')->on('Paciente')->onDelete('cascade');
-        });
+        // no-op: table created by 2025_11_02_000009_create_familias_table.php
     }
 
     public function down()
     {
-        Schema::dropIfExists('Familia');
+        // no-op
     }
-}
+};

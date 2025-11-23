@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('Paciente', function (Blueprint $table) {
-            $table->bigIncrements('idPaciente');
-            // basic patient columns (add more later via other migrations or seeds)
-            $table->string('nombrePaciente')->nullable();
-            $table->string('correo')->nullable();
+        Schema::create('TipoConsulta', function (Blueprint $table) {
+            $table->id('idTipoConsulta');
+            $table->string('nombreTipoConsulta');
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pacientes');
+        Schema::dropIfExists('TipoConsulta');
     }
 };

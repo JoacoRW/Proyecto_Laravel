@@ -36,6 +36,7 @@ class Consulta extends Model
 
     public function paciente()
     {
+        // foreign key on Consulta is `idPaciente`, and Paciente primary key is `idPaciente`
         return $this->belongsTo(Paciente::class, 'idPaciente', 'idPaciente');
     }
 
@@ -47,6 +48,11 @@ class Consulta extends Model
     public function profesional()
     {
         return $this->belongsTo(ProfesionalSalud::class, 'idProfesionalSalud', 'idProfesionalSalud');
+    }
+
+    public function tipoConsulta()
+    {
+        return $this->belongsTo(TipoConsulta::class, 'idTipoConsulta', 'idTipoConsulta');
     }
 
     public function diagnósticos()
@@ -63,5 +69,13 @@ class Consulta extends Model
     public function evoluciones()
     {
         return $this->hasMany(Evolucion::class, 'idConsulta', 'idConsulta');
+    }
+
+    /**
+     * Pivot-like relation to ConsultaExamen entries for this consulta.
+     */
+    public function consultaExamenes()
+    {
+        return $this->hasMany(ConsultaExamen::class, 'idConsulta', 'idConsulta');
     }
 }
