@@ -54,5 +54,78 @@
                 @endif
             </main>
         </div>
+        <script>
+            // SSE client: listens to /events and dispatches a DOM event 'sse-message'
+            (function(){
+                if (typeof EventSource === 'undefined') return;
+                try {
+                    const nodeBase = @json(env('NODE_API_URL')) || '';
+                    const base = (typeof nodeBase === 'string' && nodeBase.length) ? nodeBase.replace(/\/$/, '') : '';
+                    // If NODE_API_URL is set in Laravel .env, use it. Otherwise prefer localhost:3001 (Node default)
+                    const defaultNode = 'http://localhost:3001';
+                    const url = base ? base + '/events' : ((location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? defaultNode + '/events' : '/events');
+                    const es = new EventSource(url);
+                    es.addEventListener('message', function(e){
+                        // generic message (no event name)
+                        try { const data = JSON.parse(e.data); window.dispatchEvent(new CustomEvent('sse-message', { detail: data })); } catch (err) { console.log('sse message', e.data); }
+                    });
+                    es.addEventListener('paciente_created', function(e){
+                        try { const data = JSON.parse(e.data); window.dispatchEvent(new CustomEvent('sse-paciente-created', { detail: data })); } catch (err) { console.log('sse paciente_created', e.data); }
+                    });
+                    es.onopen = function(){ console.debug('SSE connected'); };
+                    es.onerror = function(err){ console.debug('SSE error', err); };
+                } catch (e) {
+                    console.warn('SSE not available', e);
+                }
+            })();
+        </script>
+        <script>
+            // UI handler for incoming paciente events: show toast and update dashboard counter if present
+            (function(){
+                function formatNumber(n){ return n.toLocaleString ? n.toLocaleString() : String(n); }
+
+                function incrementCounter(id, delta){
+                    const el = document.getElementById(id);
+                    if (!el) return false;
+                    const raw = el.textContent.replace(/,/g, '').trim();
+                    const num = parseInt(raw === '' ? '0' : raw, 10) || 0;
+                    el.textContent = formatNumber(num + delta);
+                    return true;
+                }
+
+                function showToast(msg){
+                    try {
+                        let container = document.getElementById('sse-toast-container');
+                        if (!container){
+                            container = document.createElement('div');
+                            container.id = 'sse-toast-container';
+                            container.style.position = 'fixed';
+                            container.style.top = '1rem';
+                            container.style.right = '1rem';
+                            container.style.zIndex = 99999;
+                            document.body.appendChild(container);
+                        }
+                        const t = document.createElement('div');
+                        t.textContent = msg;
+                        t.style.background = 'rgba(0,0,0,0.8)';
+                        t.style.color = '#fff';
+                        t.style.padding = '8px 12px';
+                        t.style.marginTop = '8px';
+                        t.style.borderRadius = '6px';
+                        t.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+                        container.appendChild(t);
+                        setTimeout(()=>{ t.style.transition = 'opacity 400ms'; t.style.opacity = '0'; setTimeout(()=>t.remove(), 500); }, 3500);
+                    } catch(e){ console.debug('toast error', e); }
+                }
+
+                window.addEventListener('sse-paciente-created', function(ev){
+                    const p = ev && ev.detail ? ev.detail : null;
+                    const name = p && p.nombrePaciente ? p.nombrePaciente : ('Paciente ' + (p && p.idPaciente ? p.idPaciente : 'nuevo'));
+                    showToast('Paciente creado: ' + name);
+                    // update dashboard counter if present
+                    incrementCounter('pacientes-value', 1);
+                });
+            })();
+        </script>
     </body>
 </html>
