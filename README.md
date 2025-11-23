@@ -2,11 +2,6 @@
 
 - PHP 8.2 o superior
 - Composer v2+
-- Node.js 18+ y npm (o Yarn)
-- SQLite3 (para desarrollo rápido) o MySQL/Postgres en producción
-- Extensiones PHP: pdo, pdo_sqlite (si usas sqlite), mbstring, openssl, tokenizer, xml, ctype, json, fileinfo, intl (recomendado)
-
-
 ## Instalación y puesta en marcha (PowerShell)
 
 1. Clona el repo:
@@ -14,31 +9,20 @@
 ```powershell
 git clone <repo-url>
 cd Proyecto_Laravel
-```
-
-2. Instala dependencias PHP:
-
-```powershell
 composer install
 ```
 
 3. Copia `.env` y genera `APP_KEY`:
 
-```powershell
-cp .env.example .env
-php artisan key:generate
-```
 
 4. (SQLite) crea el archivo de BD y ajusta `.env`:
 
-```powershell
 New-Item -Path . -Name "database\database.sqlite" -ItemType File -Force
 # En .env: DB_CONNECTION=sqlite y DB_DATABASE=./database/database.sqlite
 ```
 
 5. Ejecuta migraciones y seeders:
 
-```powershell
 php artisan migrate
 php artisan db:seed
 # O limpiar y sembrar:
@@ -46,7 +30,6 @@ php artisan migrate:fresh --seed
 ```
 
 6. Instala dependencias de Node y compila assets:
-
 ```powershell
 npm install
 npm run dev
@@ -115,7 +98,6 @@ php artisan migrate:fresh --seed
 php artisan generate:demo --patients=50 --consultas=200 --days=60 --exams=3
 ```
 
----
 
 ## Usar `server.js` (Node API) en EC2
 
