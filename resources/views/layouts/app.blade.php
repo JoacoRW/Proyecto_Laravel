@@ -13,6 +13,24 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>
+            :root {
+                --dashboard-primary: {{ auth()->check() && auth()->user()->dashboard_color_primary ? auth()->user()->dashboard_color_primary : '#4d7cff' }};
+                --dashboard-secondary: {{ auth()->check() && auth()->user()->dashboard_color_secondary ? auth()->user()->dashboard_color_secondary : '#5b8fff' }};
+            }
+        </style>
+        @if(session()->has('dashboard_color_primary') || session()->has('dashboard_color_secondary'))
+            <script>
+                // Apply flashed dashboard colors immediately for the current request
+                try {
+                    const p = @json(session('dashboard_color_primary'));
+                    const s = @json(session('dashboard_color_secondary'));
+                    if (p) document.documentElement.style.setProperty('--dashboard-primary', p);
+                    if (s) document.documentElement.style.setProperty('--dashboard-secondary', s);
+                } catch (e) { console.error(e); }
+            </script>
+        @endif
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">

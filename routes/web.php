@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DatabaseController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\DashboardMetricsController;
 use Illuminate\Support\Facades\Route;
@@ -15,9 +16,8 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Configuración - accessible only for authenticated users
-Route::get('/settings', function () {
-    return view('settings');
-})->middleware(['auth', 'verified'])->name('settings');
+Route::get('/settings', [SettingsController::class, 'index'])->middleware(['auth', 'verified'])->name('settings');
+Route::post('/settings', [SettingsController::class, 'update'])->middleware(['auth', 'verified'])->name('settings.update');
 
 // Simple DB inspector (requires auth & verified)
 Route::get('/db', [DatabaseController::class, 'index'])->middleware(['auth', 'verified'])->name('db.index');

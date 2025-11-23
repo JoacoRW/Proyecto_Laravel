@@ -39,7 +39,7 @@
         .logo {
             width: 32px;
             height: 32px;
-            background: #4d7cff;
+            background: var(--dashboard-primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -61,7 +61,7 @@
         }
 
         .sidebar-icon.active {
-            color: #4d7cff;
+            color: var(--dashboard-primary);
         }
 
         /* main content */
@@ -150,7 +150,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--dashboard-primary) 0%, var(--dashboard-secondary) 100%);
         }
 
         .user-info {
@@ -178,22 +178,33 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #4d7cff 0%, #5b8fff 100%);
-            border-radius: 16px;
-            padding: 24px;
+            background: rgba(12,16,28,0.65);
+            border-radius: 12px;
+            padding: 18px 20px;
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: 0 6px 18px rgba(2,6,23,0.45);
+            color: #ffffff;
         }
 
         .stat-card::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
+            top: -40%;
+            right: -10%;
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .stat-card .stat-label,
+        .stat-card .stat-value,
+        .stat-card .stat-subtitle,
+        .stat-card .stat-change {
+            color: #ffffff;
         }
 
         .stat-label {
@@ -343,7 +354,7 @@
         }
 
         .sales-card {
-            background: linear-gradient(135deg, #4d7cff 0%, #5b8fff 100%);
+            background: linear-gradient(135deg, var(--dashboard-primary) 0%, var(--dashboard-secondary) 100%);
             border-radius: 16px;
             padding: 24px;
             position: relative;
@@ -498,12 +509,12 @@
             </header>
             
             <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px;">
-                <a href="{{ route('consultas.index') }}" class="export-btn" style="background: #4d7cff; border: none; color: #fff; padding: 10px 16px; border-radius:8px; font-weight:600;">Ver Consultas</a>
+                <a href="{{ route('consultas.index') }}" class="export-btn" style="background: var(--dashboard-primary); border: none; color: #fff; padding: 10px 16px; border-radius:8px; font-weight:600;">Ver Consultas</a>
             </div>
 
             <!-- cartas stats -->
             <div class="stats-grid">
-                <div class="stat-card">
+                <div class="stat-card" style="background: linear-gradient(135deg, {{ auth()->check() && auth()->user()->dashboard_color_primary ? auth()->user()->dashboard_color_primary : 'var(--dashboard-primary)' }}, {{ auth()->check() && auth()->user()->dashboard_color_secondary ? auth()->user()->dashboard_color_secondary : 'var(--dashboard-secondary)' }});">
                     <div class="stat-label">Pacientes activos (30d)</div>
                     <div class="stat-value" id="pacientes-value">340290</div>
                     <div class="stat-change">
@@ -513,7 +524,7 @@
                         <span id="pacientes-change">15%</span>
                     </div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" style="background: linear-gradient(135deg, {{ auth()->check() && auth()->user()->dashboard_color_primary ? auth()->user()->dashboard_color_primary : 'var(--dashboard-primary)' }}, {{ auth()->check() && auth()->user()->dashboard_color_secondary ? auth()->user()->dashboard_color_secondary : 'var(--dashboard-secondary)' }});">
                     <div class="stat-label">Consultas (30d)</div>
                     <div class="stat-value" id="indicador-value">342224</div>
                     <div class="stat-change">
@@ -523,12 +534,12 @@
                         <span id="indicador-change">15%</span>
                     </div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" style="background: linear-gradient(135deg, {{ auth()->check() && auth()->user()->dashboard_color_primary ? auth()->user()->dashboard_color_primary : 'var(--dashboard-primary)' }}, {{ auth()->check() && auth()->user()->dashboard_color_secondary ? auth()->user()->dashboard_color_secondary : 'var(--dashboard-secondary)' }});">
                     <div class="stat-label">Nuevos pacientes (30d)</div>
                     <div class="stat-value" id="indicador2-value">23432</div>
                     <div class="stat-subtitle" id="indicador2-subtitle">131 Hug × 48 Hug</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" style="background: linear-gradient(135deg, {{ auth()->check() && auth()->user()->dashboard_color_primary ? auth()->user()->dashboard_color_primary : 'var(--dashboard-primary)' }}, {{ auth()->check() && auth()->user()->dashboard_color_secondary ? auth()->user()->dashboard_color_secondary : 'var(--dashboard-secondary)' }});">
                     <div class="stat-label">Exámenes (30d)</div>
                     <div class="stat-value" id="ventas-value">0</div>
                     <div class="stat-change">
@@ -641,6 +652,11 @@
             }
         };
 
+        // Read user colors from CSS variables
+        const __rootStyle = getComputedStyle(document.documentElement);
+        const __primaryColor = (__rootStyle.getPropertyValue('--dashboard-primary') || '#4d7cff').trim();
+        const __secondaryColor = (__rootStyle.getPropertyValue('--dashboard-secondary') || '#5b8fff').trim();
+
         // config Chart.js
         Chart.defaults.color = '#9ca3af';
         Chart.defaults.borderColor = '#1a1f3a';
@@ -654,7 +670,7 @@
                 datasets: [{
                     label: 'Actividad',
                     data: dashboardData.actividadMedica.data,
-                    backgroundColor: '#4d7cff',
+                    backgroundColor: __primaryColor,
                     borderRadius: 8,
                     barThickness: 40
                 }]
@@ -736,7 +752,7 @@
                 datasets: [{
                     label: 'Exámenes',
                     data: dashboardData.examenes.data,
-                    backgroundColor: '#4d7cff',
+                    backgroundColor: __primaryColor,
                     borderRadius: 8,
                     barThickness: 20
                 }]
