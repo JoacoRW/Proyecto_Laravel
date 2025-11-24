@@ -15,6 +15,15 @@
         </thead>
         <tbody></tbody>
     </table>
+    <div class="mt-4 text-right">
+        <a href="{{ route('db.exportList') }}" class="inline-flex items-center gap-3 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm" style="box-shadow: 0 6px 18px rgba(239,68,68,0.12);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h4a1 1 0 110 2H5v12h10V4h-3a1 1 0 110-2h4a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V3z" clip-rule="evenodd" />
+                <path d="M9 7a1 1 0 012 0v4.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 011.414-1.414L9 11.586V7z" />
+            </svg>
+            <span class="font-semibold">Exportar lista (CSV)</span>
+        </a>
+    </div>
 </div>
 
 <script>

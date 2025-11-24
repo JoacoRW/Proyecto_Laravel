@@ -22,6 +22,8 @@ Route::post('/settings', [SettingsController::class, 'update'])->middleware(['au
 // Simple DB inspector (requires auth & verified)
 Route::get('/db', [DatabaseController::class, 'index'])->middleware(['auth', 'verified'])->name('db.index');
 Route::get('/db/tables', [DatabaseController::class, 'tables'])->middleware(['auth', 'verified'])->name('db.tables');
+Route::get('/db/export', [DatabaseController::class, 'export'])->middleware(['auth', 'verified'])->name('db.export');
+Route::get('/db/export-list', [DatabaseController::class, 'exportList'])->middleware(['auth', 'verified'])->name('db.exportList');
 
 // Consultas resource routes (includes index/show/create/edit/store/update/destroy)
 Route::resource('consultas', ConsultaController::class)->middleware(['auth', 'verified']);
