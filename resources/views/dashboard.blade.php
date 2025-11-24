@@ -898,7 +898,29 @@
 
         // initial load and periodic refresh
         loadDashboardMetrics();
+
+        // refresh full metrics every minute
         setInterval(loadDashboardMetrics, 60 * 1000); // refresh every minute
+
+        // lightweight updater for "Consultas (30d)" every 3 seconds
+        async function refreshConsultasOnly() {
+            try {
+                const res = await fetch('{{ route('metrics.dashboard') }}', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                if (!res.ok) throw new Error('Network response was not ok');
+                const d = await res.json();
+                if (d && d.indicador) {
+                    const elVal = document.getElementById('indicador-value');
+                    const elChange = document.getElementById('indicador-change');
+                    if (elVal) elVal.textContent = d.indicador.value.toLocaleString();
+                    if (elChange && d.indicador.change !== undefined) elChange.textContent = d.indicador.change + '%';
+                }
+            } catch (err) {
+                console.debug('refreshConsultasOnly failed', err);
+            }
+        }
+        // start the consultas-only loop
+        refreshConsultasOnly();
+        setInterval(refreshConsultasOnly, 3 * 1000);
     </script>
 </body>
 </html>

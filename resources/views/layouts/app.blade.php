@@ -55,28 +55,92 @@
             </main>
         </div>
         <script>
-            // SSE client: listens to /events and dispatches a DOM event 'sse-message'
+            // Robust SSE client with multi-host attempts and polling fallback.
             (function(){
                 if (typeof EventSource === 'undefined') return;
-                try {
-                    const nodeBase = @json(env('NODE_API_URL')) || '';
-                    const base = (typeof nodeBase === 'string' && nodeBase.length) ? nodeBase.replace(/\/$/, '') : '';
-                    // If NODE_API_URL is set in Laravel .env, use it. Otherwise prefer localhost:3001 (Node default)
-                    const defaultNode = 'http://localhost:3001';
-                    const url = base ? base + '/events' : ((location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? defaultNode + '/events' : '/events');
-                    const es = new EventSource(url);
+
+                // Helper: start polling fallback that fetches a minimal endpoint every 3s
+                function startPollingFallback() {
+                    if (window.__ssePollIntervalId) return; // already polling
+                    console.debug('SSE fallback: starting polling');
+                    window.__ssePollIntervalId = setInterval(async function(){
+                        try {
+                            // try a small lightweight endpoint if available, otherwise metrics dashboard
+                            const url = '/metrics/dashboard';
+                            const r = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                            if (!r.ok) return;
+                            const d = await r.json();
+                            window.dispatchEvent(new CustomEvent('sse-message', { detail: d }));
+                        } catch (e) { /* ignore transient errors */ }
+                    }, 3000);
+                }
+
+                function stopPollingFallback() {
+                    if (window.__ssePollIntervalId) {
+                        clearInterval(window.__ssePollIntervalId);
+                        window.__ssePollIntervalId = null;
+                        console.debug('SSE fallback: stopped polling');
+                    }
+                }
+
+                // Attach handlers to an EventSource instance
+                function attachSseHandlers(es, url) {
                     es.addEventListener('message', function(e){
-                        // generic message (no event name)
                         try { const data = JSON.parse(e.data); window.dispatchEvent(new CustomEvent('sse-message', { detail: data })); } catch (err) { console.log('sse message', e.data); }
                     });
                     es.addEventListener('paciente_created', function(e){
                         try { const data = JSON.parse(e.data); window.dispatchEvent(new CustomEvent('sse-paciente-created', { detail: data })); } catch (err) { console.log('sse paciente_created', e.data); }
                     });
-                    es.onopen = function(){ console.debug('SSE connected'); };
-                    es.onerror = function(err){ console.debug('SSE error', err); };
-                } catch (e) {
-                    console.warn('SSE not available', e);
+                    es.onopen = function(){ console.debug('SSE connected', url); stopPollingFallback(); };
+                    es.onerror = function(err){ console.debug('SSE error', url, err); };
                 }
+
+                // Try multiple candidate URLs in sequence. If none succeed, start polling.
+                (async function tryHosts() {
+                    const nodeEnv = @json(env('NODE_API_URL')) || '';
+                    const baseFromEnv = (typeof nodeEnv === 'string' && nodeEnv.length) ? nodeEnv.replace(/\/$/, '') : '';
+                    const candidates = [];
+                    if (baseFromEnv) candidates.push(baseFromEnv.replace(/\/$/, '') + '/events');
+                    // try 127.0.0.1 and localhost explicitly
+                    candidates.push('http://127.0.0.1:3001/events');
+                    candidates.push('http://localhost:3001/events');
+                    // fallback to same origin /events (Laravel could proxy)
+                    candidates.push(location.origin + '/events');
+
+                    for (let i = 0; i < candidates.length; i++) {
+                        const url = candidates[i];
+                        try {
+                            // Try to open an EventSource and wait briefly for open/error
+                            const es = new EventSource(url);
+                            let settled = false;
+                            const prom = new Promise((resolve, reject) => {
+                                const onOpen = () => { settled = true; es.removeEventListener('open', onOpen); es.removeEventListener('error', onError); resolve('open'); };
+                                const onError = (e) => { if (!settled) { settled = true; es.removeEventListener('open', onOpen); es.removeEventListener('error', onError); reject(e); } };
+                                es.addEventListener('open', onOpen);
+                                es.addEventListener('error', onError);
+                                // safety timeout: if neither open nor error in 2500ms, treat as failure
+                                setTimeout(()=>{ if (!settled) { settled = true; es.removeEventListener('open', onOpen); es.removeEventListener('error', onError); try { es.close(); } catch(e){}; reject(new Error('timeout')); } }, 2500);
+                            });
+                            try {
+                                await prom; // opened
+                                // attach handlers and set global ref
+                                window.__sseEventSource = es;
+                                attachSseHandlers(es, url);
+                                console.debug('SSE connected (candidate):', url);
+                                return; // success
+                            } catch (err) {
+                                try { es.close(); } catch(e){}
+                                console.debug('SSE candidate failed:', url, err && err.message ? err.message : err);
+                                // try next
+                            }
+                        } catch (err) {
+                            console.debug('SSE attempt error for', url, err && err.message ? err.message : err);
+                        }
+                    }
+
+                    // all candidates failed -> start polling fallback
+                    startPollingFallback();
+                })();
             })();
         </script>
         <script>
@@ -128,4 +192,5 @@
             })();
         </script>
     </body>
+    @stack('scripts')
 </html>

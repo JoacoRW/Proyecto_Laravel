@@ -77,3 +77,46 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    // Auto-refresh the consultas list every 3 seconds by fetching the same page
+    // and replacing the table body and pagination. This avoids changing the
+    // controller or adding a new endpoint.
+    async function refreshConsultasList() {
+        try {
+            const res = await fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            if (!res.ok) throw new Error('fetch failed ' + res.status);
+            const text = await res.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+
+            // find the new table and pagination in the fetched document
+            const newTable = doc.querySelector('table');
+            const newTbody = newTable ? newTable.querySelector('tbody') : null;
+            const newPagination = doc.querySelector('.pagination, nav[role="navigation"], .w-5');
+
+            const currentTable = document.querySelector('table');
+            if (currentTable && newTbody) {
+                const currentTbody = currentTable.querySelector('tbody');
+                if (currentTbody) {
+                    currentTbody.innerHTML = newTbody.innerHTML;
+                }
+            }
+
+            // replace pagination links if present
+            const currentPagination = document.querySelector('.pagination') || document.querySelector('nav[role="navigation"]');
+            if (currentPagination && newPagination) {
+                currentPagination.innerHTML = newPagination.innerHTML;
+            }
+
+        } catch (err) {
+            console.debug('refreshConsultasList error', err);
+        }
+    }
+
+    // start periodic refresh every 3 seconds
+    refreshConsultasList();
+    setInterval(refreshConsultasList, 3 * 1000);
+</script>
+@endpush
