@@ -79,28 +79,7 @@
             margin-bottom: 30px;
         }
 
-        .search-bar {
-            display: flex;
-            align-items: center;
-            background: #13182e;
-            border-radius: 8px;
-            padding: 10px 15px;
-            width: 300px;
-        }
-
-        .search-bar input {
-            background: none;
-            border: none;
-            color: #ffffff;
-            outline: none;
-            margin-left: 10px;
-            width: 100%;
-            font-size: 14px;
-        }
-
-        .search-bar input::placeholder {
-            color: #6b7280;
-        }
+        /* search bar removed - header left intentionally empty */
 
         .header-actions {
             display: flex;
@@ -464,12 +443,7 @@
         <main class="main-content">
             <!-- header -->
             <header class="header">
-                <div class="search-bar">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    <input type="text" placeholder="Busca aquí...">
-                </div>
+                <div></div>
                 <div class="header-actions">
                     <!--DB button-->
                     <a href="{{ route('db.index') }}" class="icon-btn" title="Inspector DB" style="margin-right:8px">

@@ -121,6 +121,36 @@
             .dashboard-theme .relative .rounded-md.shadow-lg {
                 box-shadow: 0 6px 18px rgba(3,6,23,0.6) !important;
             }
+
+            /* Themed card used by show/edit views */
+            .themed-card {
+                background: #ffffff;
+                color: #111827;
+            }
+
+            .themed-input {
+                background: #ffffff;
+                color: #111827;
+            }
+
+            /* Dashboard overrides */
+            .dashboard-theme .themed-card {
+                background: #0f1724 !important;
+                color: #e6eef8 !important;
+                border-color: rgba(255,255,255,0.03) !important;
+            }
+
+            .dashboard-theme .themed-input {
+                background: #0b1220 !important;
+                color: #e6eef8 !important;
+                border-color: rgba(255,255,255,0.04) !important;
+            }
+
+            /* Override utility bg-gray-100 used in some thead rows */
+            .dashboard-theme tr.bg-gray-100, .dashboard-theme .thead-row {
+                background: rgba(255,255,255,0.03) !important;
+                color: #bfc9d6 !important;
+            }
         </style>
         @if(session()->has('dashboard_color_primary') || session()->has('dashboard_color_secondary'))
             <script>

@@ -12,13 +12,36 @@ use App\Http\Requests\UpdateConsultaRequest;
 
 class ConsultaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $consultas = Consulta::with(['paciente', 'tipoConsulta', 'consultaExamenes'])
-            ->orderByDesc('idConsulta')
-            ->paginate(15);
+        $q = trim((string) $request->query('q', ''));
 
-        return view('consultas.index', compact('consultas'));
+        $query = Consulta::with(['paciente', 'tipoConsulta', 'consultaExamenes']);
+
+        if ($q !== '') {
+            // detect paciente name column like in create/edit
+            $pacienteModel = new Paciente();
+            $pacienteTable = $pacienteModel->getTable();
+            if (Schema::hasColumn($pacienteTable, 'nombrePaciente')) {
+                $nameCol = 'nombrePaciente';
+            } elseif (Schema::hasColumn($pacienteTable, 'nombre')) {
+                $nameCol = 'nombre';
+            } elseif (Schema::hasColumn($pacienteTable, 'name')) {
+                $nameCol = 'name';
+            } else {
+                $nameCol = $pacienteModel->getKeyName();
+            }
+
+            $query->whereHas('paciente', function ($qwhere) use ($nameCol, $q) {
+                $qwhere->where($nameCol, 'like', '%' . $q . '%');
+            });
+        }
+
+        $consultas = $query->orderByDesc('idConsulta')
+            ->paginate(15)
+            ->appends(['q' => $q]);
+
+        return view('consultas.index', compact('consultas', 'q'));
     }
 
     public function create()

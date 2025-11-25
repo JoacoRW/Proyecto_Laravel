@@ -4,8 +4,18 @@
 <div class="max-w-5xl mx-auto p-6">
     <h1 class="text-2xl font-bold mb-4">Consultas</h1>
 
-    <div class="mb-4 flex justify-end">
-        <a href="{{ route('consultas.create') }}" class="px-4 py-2 bg-green-600 text-gray rounded">Crear Consulta</a>
+    <div class="mb-4 flex items-center justify-between gap-4">
+        <form method="GET" action="{{ route('consultas.index') }}" class="flex items-center gap-2">
+            <input name="q" type="search" placeholder="Buscar por paciente..." value="{{ old('q', $q ?? request('q')) }}" class="p-2 border rounded themed-input" />
+            <button type="submit" class="px-3 py-2 rounded text-white" style="background:var(--dashboard-primary)">Buscar</button>
+            @if(request()->has('q') && request('q') !== '')
+                <a href="{{ route('consultas.index') }}" class="ml-2 text-sm text-gray-300">Limpiar</a>
+            @endif
+        </form>
+
+        <div class="flex-shrink-0">
+            <a href="{{ route('consultas.create') }}" class="px-4 py-2 bg-green-600 text-gray rounded">Crear Consulta</a>
+        </div>
     </div>
 
     <table class="w-full table-auto border mb-4">

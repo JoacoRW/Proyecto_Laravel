@@ -14,8 +14,8 @@
         @include('consultas._form')
 
         <div class="mt-4">
-            <button class="px-4 py-2 bg-blue-600 text-gray rounded">Actualizar</button>
-            <a href="{{ route('consultas.show', $consulta->idConsulta) }}" class="ml-2 text-gray-500">Cancelar</a>
+            <button class="px-4 py-2 rounded text-white" style="background:var(--dashboard-primary)">Actualizar</button>
+            <a href="{{ route('consultas.show', $consulta->idConsulta) }}" class="ml-2 text-gray-300">Cancelar</a>
         </div>
     </form>
 </div>

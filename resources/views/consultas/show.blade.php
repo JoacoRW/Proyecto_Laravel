@@ -9,7 +9,7 @@
         <div class="mb-4 text-green-600">{{ session('success') }}</div>
     @endif
 
-    <div class="mb-4 p-4 border rounded bg-white text-black">
+    <div class="mb-4 p-4 border rounded themed-card">
         <div><strong>Paciente:</strong> {{ optional($consulta->paciente)->display_name ?? ('Paciente ' . $consulta->idPaciente) }}</div>
         <div><strong>Tipo:</strong> {{ optional($consulta->tipoConsulta)->nombreTipoConsulta ?? $consulta->idTipoConsulta }}</div>
         <div><strong>Fecha ingreso:</strong> {{ $consulta->fechaIngreso?->format('Y-m-d') }}</div>
@@ -31,9 +31,9 @@
     @if($consulta->consultaExamenes->isEmpty())
         <div>No hay exámenes registrados.</div>
     @else
-        <table class="w-full table-auto border">
+        <table class="w-full table-auto border table-container">
             <thead>
-                <tr class="bg-gray-100">
+                <tr class="thead-row">
                     <th class="p-2">idExamen</th>
                     <th class="p-2">Fecha</th>
                     <th class="p-2">Observación</th>
