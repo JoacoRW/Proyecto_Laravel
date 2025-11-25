@@ -19,6 +19,108 @@
                 --dashboard-primary: {{ auth()->check() && auth()->user()->dashboard_color_primary ? auth()->user()->dashboard_color_primary : '#4d7cff' }};
                 --dashboard-secondary: {{ auth()->check() && auth()->user()->dashboard_color_secondary ? auth()->user()->dashboard_color_secondary : '#5b8fff' }};
             }
+
+            /* Dashboard theme applied to dashboard, db and consultas pages */
+            .dashboard-theme {
+                --dashboard-primary: var(--dashboard-primary);
+                --dashboard-secondary: var(--dashboard-secondary);
+                color: #e6eef8;
+                background: #071028;
+            }
+
+            .dashboard-theme .min-h-screen {
+                background: linear-gradient(180deg,#071028 0%, #0a0e27 100%);
+            }
+
+            .dashboard-theme .stat-card,
+            .dashboard-theme .chart-card,
+            .dashboard-theme .sales-card,
+            .dashboard-theme .table-container,
+            .dashboard-theme .icon-btn,
+            .dashboard-theme table {
+                background: #0f1724 !important;
+                color: #e6eef8 !important;
+                border-color: rgba(255,255,255,0.03) !important;
+            }
+
+            .dashboard-theme table thead th {
+                color: #9ca3af !important;
+                border-bottom-color: #1a1f3a !important;
+            }
+
+            /* Header / navigation adjustments for dashboard theme */
+            .dashboard-theme nav {
+                background: linear-gradient(180deg,#071028 0%, #071028 100%) !important;
+                border-bottom-color: rgba(255,255,255,0.03) !important;
+            }
+
+            .dashboard-theme nav .text-gray-800,
+            .dashboard-theme nav .text-gray-500,
+            .dashboard-theme nav .fill-current {
+                color: #e6eef8 !important;
+            }
+
+            /* Make the page heading background match the dark theme */
+            .dashboard-theme header.bg-white.shadow {
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+
+            .dashboard-theme header .max-w-7xl { color: #e6eef8 !important; }
+
+            /* Make table header (mini header) dark to match theme */
+            .dashboard-theme table thead th {
+                background: rgba(255,255,255,0.02) !important;
+                color: #bfc9d6 !important;
+            }
+
+            /* override any explicit light backgrounds inside the dashboard theme */
+            .dashboard-theme table thead tr,
+            .dashboard-theme table thead th {
+                background: rgba(255,255,255,0.03) !important;
+            }
+
+            /* user dropdown trigger (top-right small white rectangle) */
+            .dashboard-theme .user-trigger {
+                background: transparent !important;
+                color: #e6eef8 !important;
+                border-color: rgba(255,255,255,0.04) !important;
+            }
+
+            .dashboard-theme .user-trigger:hover {
+                background: rgba(255,255,255,0.02) !important;
+            }
+
+            .dashboard-theme a { color: var(--dashboard-primary) !important; }
+            .dashboard-theme .export-btn { background: var(--dashboard-primary) !important; }
+            .dashboard-theme .icon-btn { background: #0b1220 !important; }
+            .dashboard-theme .user-avatar { background: linear-gradient(135deg, var(--dashboard-primary) 0%, var(--dashboard-secondary) 100%) !important; }
+
+            /* Dropdown content (user menu) - force dark background and readable text in dashboard theme */
+            .dashboard-theme .relative > div[style] .rounded-md,
+            .dashboard-theme .relative > div[x-show] .rounded-md,
+            .dashboard-theme .relative .rounded-md.bg-white {
+                background: #0f1724 !important;
+                color: #e6eef8 !important;
+                border-color: rgba(255,255,255,0.04) !important;
+            }
+
+            .dashboard-theme .relative .rounded-md a,
+            .dashboard-theme .relative .rounded-md .dropdown-link {
+                color: #cfe6ff !important;
+            }
+
+            .dashboard-theme .relative .rounded-md a:hover,
+            .dashboard-theme .relative .rounded-md a:focus {
+                background: rgba(255,255,255,0.03) !important;
+                color: #fff !important;
+            }
+
+            /* Reduce shadow contrast for dropdown in dark theme */
+            .dashboard-theme .relative > div.rounded-md.shadow-lg,
+            .dashboard-theme .relative .rounded-md.shadow-lg {
+                box-shadow: 0 6px 18px rgba(3,6,23,0.6) !important;
+            }
         </style>
         @if(session()->has('dashboard_color_primary') || session()->has('dashboard_color_secondary'))
             <script>
@@ -32,7 +134,8 @@
             </script>
         @endif
     </head>
-    <body class="font-sans antialiased">
+    <?php $__dashboard_apply = request()->is('dashboard') || request()->is('consultas*') || request()->is('db*') || request()->is('settings') || request()->is('settings*'); ?>
+    <body class="font-sans antialiased {{ $__dashboard_apply ? 'dashboard-theme' : '' }}">
         <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 
