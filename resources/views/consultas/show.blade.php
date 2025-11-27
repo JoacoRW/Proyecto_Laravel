@@ -12,7 +12,24 @@
     <div class="mb-4 p-4 border rounded themed-card">
         <div><strong>Paciente:</strong> {{ optional($consulta->paciente)->display_name ?? ('Paciente ' . $consulta->idPaciente) }}</div>
         <div><strong>Tipo:</strong> {{ optional($consulta->tipoConsulta)->nombreTipoConsulta ?? $consulta->idTipoConsulta }}</div>
-        <div><strong>Fecha ingreso:</strong> {{ $consulta->fechaIngreso?->format('Y-m-d') }}</div>
+        <div><strong>Fecha ingreso:</strong>
+            @php
+                $__fecha = data_get($consulta, 'fechaIngreso');
+                $__fechaFmt = '';
+                if ($__fecha) {
+                    try {
+                        if (is_object($__fecha) && method_exists($__fecha, 'format')) {
+                            $__fechaFmt = $__fecha->format('Y-m-d');
+                        } else {
+                            $__fechaFmt = \Carbon\Carbon::parse($__fecha)->format('Y-m-d');
+                        }
+                    } catch (\Exception $e) {
+                        $__fechaFmt = (string) $__fecha;
+                    }
+                }
+            @endphp
+            {{ $__fechaFmt }}
+        </div>
         <div><strong>Motivo:</strong> {{ $consulta->motivo }}</div>
         <div><strong>Observación:</strong> {{ $consulta->observacion }}</div>
     </div>
@@ -42,10 +59,27 @@
             <tbody>
                 @foreach($consulta->consultaExamenes as $ce)
                     <tr>
-                        <td class="p-2">{{ $ce->idExamen }}</td>
-                        <td class="p-2">{{ $ce->fecha?->format('Y-m-d') }}</td>
-                        <td class="p-2">{{ $ce->observacion }}</td>
-                    </tr>
+                            <td class="p-2">{{ $ce->idExamen }}</td>
+                            <td class="p-2">
+                                @php
+                                    $__d = data_get($ce, 'fecha');
+                                    $__d_v = '';
+                                    if ($__d) {
+                                        try {
+                                            if (is_object($__d) && method_exists($__d, 'format')) {
+                                                $__d_v = $__d->format('Y-m-d');
+                                            } else {
+                                                $__d_v = \Carbon\Carbon::parse($__d)->format('Y-m-d');
+                                            }
+                                        } catch (\Exception $e) {
+                                            $__d_v = (string) $__d;
+                                        }
+                                    }
+                                @endphp
+                                {{ $__d_v }}
+                            </td>
+                            <td class="p-2">{{ $ce->observacion }}</td>
+                        </tr>
                 @endforeach
             </tbody>
         </table>
